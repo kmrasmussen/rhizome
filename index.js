@@ -51,6 +51,7 @@ const httpserver = function(db) {
   const app = express()
   const port = 3000
   const bodyParser = require('body-parser');
+  app.use(express.static('interface'))
   app.use(bodyParser.urlencoded());
   app.use(bodyParser.json());
 
