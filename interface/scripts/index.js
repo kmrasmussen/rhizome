@@ -1,8 +1,14 @@
+var CURRENTNODEID = ''
+var ORIGINALTITLE = ''
+var ORIGINALCONTENT = ''
+
 const openNode = function(id) {
   console.log('Opening ' + id)
   $.getJSON('./nodes/get/' + id, function(data) {
     console.log('Got:')
     console.log(data)
+    CURRENTNODEID = data['_id']
+    console.log('CURRENTNODEID: ' + CURRENTNODEID)
     $('#currentNodeTitle').html(data['title'])
     $('#currentNodeContent').html(data['content'])
   })
@@ -18,3 +24,20 @@ const fetchLatest = function(data) {
 }
 
 $.getJSON('./nodes/latest', fetchLatest)
+
+const onSave = function() {
+  if (CURRENTNODEID != '') {
+    $.post( "./nodes/update", { id: CURRENTNODEID, title: $('#currentNodeTitle').text(), content: $('#currentNodeContent').text()}, function(data) {
+      console.log('UPDATE NODE')
+      console.log(data)
+      $('#saveButton').prop('class', 'btn btn-primary disabled')
+    })
+  } else {
+    $.post( "./nodes/new", { title: $('#currentNodeTitle').text(), content: $('#currentNodeContent').text()}, function(data) {
+      console.log('NEW NODE')
+      console.log(data)
+      CURRENTNODEID = data['_id']
+      $('#saveButton').prop('class', 'btn btn-primary disabled')
+    })
+  }
+}

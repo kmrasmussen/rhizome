@@ -27,9 +27,9 @@
 
     <main role="main" class="container">
       <div class="jumbotron">
-        <h2 id="currentNodeTitle">new node:</h2>
+        <h2 id="currentNodeTitle" contenteditable="true">untitled node</h2>
         <i><p class="lead" contenteditable="true" id="currentNodeContent">click here to start writing...</p></i>
-        <button type="button" class="btn btn-primary">Integrate</button>
+        <a class="btn btn-primary" href="#" role="button" id="saveButton" onclick="onSave()">Save</a>
       </div>
 
       <div id="latestnodesdiv" class="my-3 p-3 bg-gray rounded shadow-sm">

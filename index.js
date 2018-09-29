@@ -37,11 +37,20 @@ const deleteById = function(db, idString, callback) {
 
 const latestNodes = function(db, callback) {
   db.collection('collection1', function(err, collection) {
-    collection.find({}).sort({'date': -1}).toArray(function(err, docs) {
+    collection.find({}).sort({'time': -1}).toArray(function(err, docs) {
       assert.equal(err)
       console.log('Found these latest documents:')
       console.log(docs)
       callback(docs)
+    })
+  })
+}
+
+const updateDocument = function(db, objectid, changeset, callback) {
+  db.collection('collection1', function(err, collection) {
+    collection.updateOne({_id: objectid}, { $set: changeset}, function(err, result) {
+      assert.equal(err)
+      callback(result)
     })
   })
 }
@@ -71,11 +80,18 @@ const httpserver = function(db) {
 
   var urlencodedParser = bodyParser.urlencoded({ extended: false })
   app.post('/nodes/new', function (req, res) {
-    doc = { title: req.body['title'], content: req.body['content']}
+    doc = { title: req.body['title'], content: req.body['content'], time: Date.now()}
     insertDocument(db, doc, function(result) {
       res.send(result)
     })
-  });
+  })
+
+  app.post('/nodes/update', function(req, res) {
+    changeset = {title: req.body['title'], content: req.body['content'], time: Date.now()}
+    updateDocument(db, mongodb.ObjectID(req.body['id']), changeset, function(result) {
+      res.send(result)
+    })
+  })
 
   app.listen(port, function() {
     console.log('Example app listening on port 3000!')
