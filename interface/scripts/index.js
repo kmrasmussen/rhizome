@@ -18,7 +18,8 @@ latest = []
 const fetchLatest = function(data) {
   latest = data
   for(i = 0; i < Math.min(data.length, 5); i++) {
-    newelem = '<div class="media text-muted pt-3"><p class="media-body pb-3 mb-0 small lh-125 border-bottom border-gray"><strong class="d-block text-gray-dark"><a href="#" onclick="openNode(\'' + data[i]['_id'] + '\')">' + data[i]['title'] + '</a></strong>' + data[i]['content'] + '</p></div>'
+    let excerptLength = Math.min(200, data[i]['content'].length)
+    newelem = '<div class="media text-muted pt-3"><p class="media-body pb-3 mb-0 small lh-125 border-bottom border-gray"><strong class="d-block text-gray-dark"><a href="#" onclick="openNode(\'' + data[i]['_id'] + '\')">' + data[i]['title'] + '</a></strong>' + data[i]['content'].substring(0, excerptLength) + '...</p></div>'
     $('#latestnodesdiv').append(newelem)
   }
 }
@@ -27,13 +28,13 @@ $.getJSON('./nodes/latest', fetchLatest)
 
 const onSave = function() {
   if (CURRENTNODEID != '') {
-    $.post( "./nodes/update", { id: CURRENTNODEID, title: $('#currentNodeTitle').text(), content: $('#currentNodeContent').text()}, function(data) {
+    $.post( "./nodes/update", { id: CURRENTNODEID, title: $('#currentNodeTitle').text(), content: document.getElementById('currentNodeContent').innerHTML}, function(data) {
       console.log('UPDATE NODE')
       console.log(data)
       $('#saveButton').prop('class', 'btn btn-primary disabled')
     })
   } else {
-    $.post( "./nodes/new", { title: $('#currentNodeTitle').text(), content: $('#currentNodeContent').text()}, function(data) {
+    $.post( "./nodes/new", { title: $('#currentNodeTitle').text(), content: document.getElementById('currentNodeContent').innerHTML}, function(data) {
       console.log('NEW NODE')
       console.log(data)
       CURRENTNODEID = data['_id']
@@ -41,3 +42,21 @@ const onSave = function() {
     })
   }
 }
+
+const deleteCurrentNode = function() {
+  if (CURRENTNODEID != '') {
+    $.post('./nodes/delete', {id: CURRENTNODEID}, function(data) {
+      console.log('Deleted ' + CURRENTNODEID)
+      console.log(data)
+    })
+  }
+}
+
+$(function() {
+    $('.confirm').click(function(e) {
+        e.preventDefault();
+        if (window.confirm("Are you sure?")) {
+            location.href = this.href;
+        }
+    });
+});

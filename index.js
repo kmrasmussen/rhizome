@@ -93,6 +93,12 @@ const httpserver = function(db) {
     })
   })
 
+  app.post('/nodes/delete', function(req,res) {
+    deleteById(db, req.body['id'], function(result) {
+      res.send(result)
+    })
+  })
+
   app.listen(port, function() {
     console.log('Example app listening on port 3000!')
   })
